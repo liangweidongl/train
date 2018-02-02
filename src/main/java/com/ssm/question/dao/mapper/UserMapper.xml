@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ssm.question.dao.UserDAO">
+
+    <insert id="addUser" parameterType="User" keyProperty="id" useGeneratedKeys="true">
+        insert into USER(USERNAME,PASSWORD,NICKNAME)
+        values (#{username},#{password},#{nickname})
+    </insert>
+
+    <select id="getUserCountByName" parameterType="string" resultType="int">
+        select count(ID) from USER
+        where USERNAME=#{username}
+    </select>
+
+    <resultMap id="userMap" type="User">
+        <id property="id" column="ID"/>
+        <result property="nickname" column="NICKNAME"/>
+        <result property="password" column="PASSWORD"/>
+        <result property="username" column="USERNAME"/>
+    </resultMap>
+
+    <select id="getUserByName" parameterType="string" resultMap="userMap">
+      select ID,USERNAME,PASSWORD,NICKNAME
+      from USER
+      where USERNAME=#{username}
+    </select>
+</mapper>
+    

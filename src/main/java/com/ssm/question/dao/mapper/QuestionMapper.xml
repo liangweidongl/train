@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ssm.question.dao.QuestionDAO">
+
+    <insert id="addQuestion" parameterType="Question" useGeneratedKeys="true" keyProperty="id">
+        insert into QUESTION(TITLE,DETAIL,CREATED_TIME,USER_ID,REPLY_COUNT,UPDATE_TIME)
+        values(#{title},#{detail},now(),#{user.id},0,now())
+    </insert>
+
+    <resultMap id="queMap" type="Question">
+        <id property="id" column="ID"/>
+        <result property="createdDate" column="CREATED_TIME"/>
+        <result property="title" column="TITLE"/>
+        <result property="replyCount" column="REPLY_COUNT"/>
+        <result property="updateTime" column="UPDATE_TIME"/>
+        <result property="detail" column="DETAIL"/>
+        <association property="user" javaType="User">
+            <id property="id" column="USER_ID"/>
+            <result property="nickname" column="NICKNAME"/>
+        </association>
+    </resultMap>
+
+    <select id="getQuestionList" parameterType="Question" resultMap="queMap">
+        select Q.ID,Q.TITLE,Q.CREATED_TIME,Q.USER_ID,Q.REPLY_COUNT,Q.UPDATE_TIME,U.NICKNAME
+        from QUESTION Q
+        inner join USER U ON U.ID=Q.USER_ID
+        <where>
+            <if test="title !=null and title !=''">and TITLE like CONCAT('%',#{title},'%')</if>
+        </where>
+    </select>
+
+
+    <select id="getQuestionById" parameterType="int" resultMap="queMap">
+        select Q.ID,Q.TITLE,Q.CREATED_TIME,Q.USER_ID,Q.REPLY_COUNT,Q.UPDATE_TIME,Q.DETAIL,U.NICKNAME
+        from QUESTION Q
+        inner join USER U ON U.ID=Q.USER_ID
+        where Q.ID=#{id}
+    </select>
+
+    <update id="updateCountAndTime" parameterType="Question">
+        update QUESTION
+        set REPLY_COUNT=REPLY_COUNT+${replyCount},
+        UPDATE_TIME=now()
+        where ID=#{id}
+    </update>
+</mapper>
+    

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ssm.question.dao.AnswerDAO">
+
+   <insert id="addAnswer" parameterType="Answer" keyProperty="id" useGeneratedKeys="true">
+       insert into ANSWER(USER_ID,QUESTION_ID,CONTENT,CREATED_TIME)
+       values (#{user.id},#{questionId},#{content},#{createdTime})
+   </insert>
+  <resultMap id="answerMap" type="Answer">
+      <id property="id" column="ID"/>
+      <result property="content" column="CONTENT"/>
+      <result property="questionId" column="QUESTION_ID"/>
+      <result property="createdTime" column="CREATED_TIME"/>
+      <association property="user" javaType="User">
+          <id property="id" column="USER_ID"/>
+          <result property="nickname" column="NICKNAME"/>
+      </association>
+  </resultMap>
+
+    <select id="getAnswerList" parameterType="int" resultMap="answerMap">
+        select A.ID,A.USER_ID,A.QUESTION_ID,A.CONTENT,A.CREATED_TIME,U.NICKNAME
+        from ANSWER A
+        inner join USER U on U.ID=A.USER_ID
+        where A.QUESTION_ID=#{questionId}
+    </select>
+
+    <delete id="deleteAnswer" parameterType="int">
+        delete from ANSWER where ID=#{id}
+    </delete>
+</mapper>
+    
